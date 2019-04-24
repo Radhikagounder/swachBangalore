@@ -1,132 +1,7 @@
-<?php
-	session_start();
-	if(isset($_POST['reg_user'])) {
-		$rand = rand(1000,9999);
-		if(mail($_POST['email'],"VERIFICATION",rand(1000,9999))){
-			echo "MAIL send";
-		} else{
-			echo "Failed";
-		}
-	}
-	// variable declaration
-	$name="";
-	$address="";
-	$username = "";
-	$email    = "";
-	$errors = array();
-	$_SESSION['success'] = "";
+<?php include('server.php') ?>
 
-	// connect to database
-	$db = mysqli_connect('localhost', 'root', '', 'registration');
-
-	// REGISTER USER
-	if (isset($_POST['reg_user'])) {
-		// receive all input values from the form
-		$username = mysqli_real_escape_string($db, $_POST['username']);
-		$email = mysqli_real_escape_string($db, $_POST['email']);
-		$password_1 = mysqli_real_escape_string($db, $_POST['password_1']);
-		$password_2 = mysqli_real_escape_string($db, $_POST['password_2']);
-
-		// form validation: ensure that the form is correctly filled
-		if (empty($username)) { array_push($errors, "Username is required"); }
-		if (empty($email)) { array_push($errors, "Email is required"); }
-		if (empty($password_1)) { array_push($errors, "Password is required"); }
-
-		if ($password_1 != $password_2) {
-			array_push($errors, "The two passwords do not match");
-		}
-
-		// register user if there are no errors in the form
-		if (count($errors) == 0) {
-			$password = md5($password_1);//encrypt the password before saving in the database
-			$query = "INSERT INTO users (username, email, password)
-					  VALUES('$username', '$email', '$password')";
-			mysqli_query($db, $query);
-
-			$_SESSION['username'] = $username;
-			$_SESSION['success'] = "You are now logged in";
-			header('location: index.php');
-		}
-
-	}
-
-	// ...
-
-	// LOGIN USER
-	if (isset($_POST['login_user'])) {
-		$username = mysqli_real_escape_string($db, $_POST['username']);
-		$password = mysqli_real_escape_string($db, $_POST['password']);
-
-		if (empty($username)) {
-			array_push($errors, "Username is required");
-		}
-		if (empty($password)) {
-			array_push($errors, "Password is required");
-		}
-
-		if (count($errors) == 0) {
-			$password = md5($password);
-			$query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
-			$results = mysqli_query($db, $query);
-
-			if (mysqli_num_rows($results) == 1) {
-				$_SESSION['username'] = $username;
-				$_SESSION['success'] = "You are now logged in";
-				header('location: index.php');
-			}else {
-				array_push($errors, "Wrong username/password combination");
-			}
-		}
-	}
-
-        if (isset($_POST['loc_user'])) {
-		// receive all input values from the form
-		$name = mysqli_real_escape_string($db, $_POST['name']);
-		$email = mysqli_real_escape_string($db, $_POST['email']);
-		$address= mysqli_real_escape_string($db, $_POST['address']);
-		//$password_2 = mysqli_real_escape_string($db, $_POST['password_2']);
-
-		// form validation: ensure that the form is correctly filled
-		if (empty($name)) { array_push($errors, "name is required"); }
-		if (empty($email)) { array_push($errors, "Email is required"); }
-		if (empty($address)) { array_push($errors, "Password is required"); }
-
-		//if ($password_1 != $password_2) {
-		//	array_push($errors, "The two passwords do not match");
-		//}
-
-		// register user if there are no errors in the form
-
-			//$password = md5($password_1);//encrypt the password before saving in the database
-			$query = "INSERT INTO location(name, email, address)
-					  VALUES('$name', '$email', '$address')";
-
-			mysqli_query($db, $query);
-			echo query;
-
-			//$_SESSION['username'] = $username;
-			//$_SESSION['success'] = "You are now logged in";
-			header('location: continue.php');
-
-
-	}
-//user getting location
-	if (isset($_POST['clean'])) {
-					$query = "SELECT * FROM location" ;
-				if($results = mysqli_query($db, $query));
-					//if ($is_query_run = mysql_query($query))
-{
-    // echo "Query Executed";
-    // loop will iterate until all data is fetched
-    while ($query_executed = mysqli_fetch_assoc ($results))
-    {
-        // these four line is for four column
-        echo $query_executed['id'].' ';
-        echo $query_executed['name'].' ';
-        echo $query_executed['email'].' ';
-        echo $query_executed['address'].'<br>';
-    }
-}
+//This code shows how to Upload And Insert Image Into Mysql Database Using Php Html.
+//connecting to uploadFile database.
 
 
 
@@ -134,6 +9,49 @@
 
 
 
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration system PHP and MySQL</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body  style="url('pal.jpg');">
+	<div class="header">
+		<h2>Share</h2>
+	</div>
+	
+	<form method="post" action="loc.php">
 
-	}
-?>
+		<?php include('errors.php'); ?>
+
+		<div class="input-group">
+			<label>name</label>
+			<input type="text" name="name" value="<?php echo $name; ?>">
+		</div>
+		<div class="input-group">
+			<label>Email</label>
+			<input type="email" name="email" value="<?php echo $email; ?>">
+		</div>
+		<div class="input-group">
+			<label>Address</label>
+		 <textarea name="address" rows="5" cols="55" value="<?php echo $address; ?>"></textarea>
+		</div>
+
+		<div class="input-group">
+			<button type="submit" class="btn" name="loc_user">share</button>
+		</div>
+		<!--<p>
+			Already a member? <a href="login.php">Sign in</a>
+		</p>-->
+		<div>
+			<!--Make sure to put "enctype="multipart/form-data" inside form tag when uploading files -->
+<form action="" method="post" enctype="multipart/form-data" >
+<!--input tag for file types should have a "type" attribute with value "file"-->
+<input type="file" name="registration" />
+<input type="submit" name="registrationsub" value="upload" />
+</form>
+		</div>
+
+	</form>
+</body>
+</html>
